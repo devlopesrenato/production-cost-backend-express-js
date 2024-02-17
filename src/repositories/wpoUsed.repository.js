@@ -1,5 +1,4 @@
-
-const { db } = require('../db');
+const database = require('../database');
 const { isEmpty, isZeroOrLess } = require('../utils');
 const { verifyJWT } = require('../utils/checkToken');
 
@@ -9,8 +8,8 @@ exports.getWPOUsed = async (req, res, next) => {
         if (vToken.status === 401) { return res.status(401).send({ "error": 401, "message": vToken.message }) }
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
-            const wpoUsed = await db.query("SELECT U.uuid, U.wpoid, F.name AS wpo, U.quantity, U.productionid FROM wpoused U LEFT JOIN wpo F ON CAST(U.wpoid AS VARCHAR)=CAST(F.uuid AS VARCHAR) ORDER BY wpo");
-            const wpo = await db.query("SELECT F.uuid, F.name, F.quantity, F.price, U.name as createby, F.createdate, R.name as modifyby, F.modifydate FROM wpo F LEFT JOIN users U ON F.createby=CAST(U.uuid AS VARCHAR) LEFT JOIN users R ON F.modifyby=CAST(R.uuid AS VARCHAR) ORDER BY F.name;")
+            const wpoUsed = await database.raw("SELECT U.uuid, U.wpoid, F.name AS wpo, U.quantity, U.productionid FROM wpoused U LEFT JOIN wpo F ON CAST(U.wpoid AS VARCHAR)=CAST(F.uuid AS VARCHAR) ORDER BY wpo");
+            const wpo = await database.raw("SELECT F.uuid, F.name, F.quantity, F.price, U.name as createby, F.createdate, R.name as modifyby, F.modifydate FROM wpo F LEFT JOIN users U ON F.createby=CAST(U.uuid AS VARCHAR) LEFT JOIN users R ON F.modifyby=CAST(R.uuid AS VARCHAR) ORDER BY F.name;")
             var result = [];
             wpoUsed.rows.forEach(fsu => {
                 var newPrice = 0;
@@ -49,23 +48,23 @@ exports.postWPOUsed = async (req, res, next) => {
                     return res.status(200).send({ "status": 200, "message": "A quantidade deve ser maior que 0" });
                 } else {
 
-                    const result = await db.query("SELECT * FROM wpoused WHERE wpoid='" + [req.body.wpoid] + "' AND productionid='" + [req.body.productionid] + "';");
+                    const result = await database.raw("SELECT * FROM wpoused WHERE wpoid='" + [req.body.wpoid] + "' AND productionid='" + [req.body.productionid] + "';");
                     if (result.rowCount > 0) {
                         return res.status(200).send({ "status": 200, "message": "Custo já utilizado" });
                     } else {
 
-                        const prod = await db.query(`SELECT * FROM production WHERE CAST(uuid as VARCHAR)='${req.body.productionid}';`)
+                        const prod = await database.raw(`SELECT * FROM production WHERE CAST(uuid as VARCHAR)='${req.body.productionid}';`)
                         if (prod.rowCount === 0) {
                             return res.status(200).send({ "status": 200, "message": "Produção não encontrada" });
                         } else {
 
-                            const fs = await db.query(`SELECT * FROM wpo WHERE CAST(uuid as VARCHAR)='${req.body.wpoid}';`)
+                            const fs = await database.raw(`SELECT * FROM wpo WHERE CAST(uuid as VARCHAR)='${req.body.wpoid}';`)
                             if (fs.rowCount === 0) {
                                 return res.status(200).send({ "status": 200, "message": "Custo não encontrado" });
                             } else {
 
-                                await db.query("INSERT INTO wpoused (wpoid, quantity, productionid) VALUES ('" + [req.body.wpoid] + "','" + [req.body.quantity] + "','" + [req.body.productionid] + "');");
-                                db.query("UPDATE production SET modifyby = '" + vToken.id + "', modifydate = '" + Date.now() + "' WHERE uuid='" + [req.body.productionid] + "';")
+                                await database.raw("INSERT INTO wpoused (wpoid, quantity, productionid) VALUES ('" + [req.body.wpoid] + "','" + [req.body.quantity] + "','" + [req.body.productionid] + "');");
+                                database.raw("UPDATE production SET modifyby = '" + vToken.id + "', modifydate = '" + Date.now() + "' WHERE uuid='" + [req.body.productionid] + "';")
                                 return res.status(201).send({ "status": 201, "message": "Dados inseridos com sucesso" });
 
                             }
@@ -86,7 +85,7 @@ exports.updateWPOUsed = async (req, res, next) => {
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
 
-            const findId = await db.query("SELECT wpoid FROM wpoused WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
+            const findId = await database.raw("SELECT wpoid FROM wpoused WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
             if (findId.rowCount === 0) {
                 return res.status(200).send({ "status": 200, "message": "UUID não encontrado" });
             } else {
@@ -95,8 +94,8 @@ exports.updateWPOUsed = async (req, res, next) => {
                     return res.status(200).send({ "status": 200, "message": "A quantidade deve ser maior que 0" });
                 } else {
 
-                    await db.query("UPDATE wpoused SET quantity='" + [req.body.quantity] + "' WHERE uuid='" + [req.body.uuid] + "';")
-                    db.query("UPDATE production SET modifyby = '" + vToken.id + "', modifydate = '" + Date.now() + "' WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.productionid] + "' AS VARCHAR);")
+                    await database.raw("UPDATE wpoused SET quantity='" + [req.body.quantity] + "' WHERE uuid='" + [req.body.uuid] + "';")
+                    database.raw("UPDATE production SET modifyby = '" + vToken.id + "', modifydate = '" + Date.now() + "' WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.productionid] + "' AS VARCHAR);")
                     return res.status(201).send({ "status": 201, "message": "Dados atualizados com sucesso" });
 
                 }
@@ -114,12 +113,12 @@ exports.deleteWPOUsed = async (req, res, next) => {
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
             
-            const findId = await db.query("SELECT wpoid FROM wpoused WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
+            const findId = await database.raw("SELECT wpoid FROM wpoused WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
             if (findId.rowCount === 0) {
                 return res.status(200).send({ "status": 200, "message": "UUID não encontrado" });
             } else {
 
-                await db.query("DELETE FROM wpoused WHERE uuid='" + [req.body.uuid] + "';")
+                await database.raw("DELETE FROM wpoused WHERE uuid='" + [req.body.uuid] + "';")
                 return res.status(201).send({ "status": 201, "message": "Dados excluidos com sucesso" });
 
             }

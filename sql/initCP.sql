@@ -99,6 +99,19 @@ ALTER TABLE production
 ADD categoryid VARCHAR NOT NULL
 DEFAULT ('')
 
+-- Drop tabela existente, se existir
+DROP TABLE IF EXISTS settings;
+
+-- Criação da tabela settings
+CREATE TABLE settings (
+    uuid uuid DEFAULT uuid_generate_v4()
+    id SERIAL NOT NULL UNIQUE,
+    description VARCHAR(255) NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    active BOOLEAN NOT NULL,
+    PRIMARY KEY (uuid)
+);
+
 INSERT INTO exactmeasure (uuid, name, createby, createdate, modifyby, modifydate, ordenation) values ('67fa3115-b75f-42af-a75b-cec78ea0cb26','ml','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','0');
 INSERT INTO exactmeasure (uuid, name, createby, createdate, modifyby, modifydate, ordenation) values ('2a2c308a-13b6-4d5d-b5d7-9d228fcb6a6a','gramas','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','1');
 INSERT INTO exactmeasure (uuid, name, createby, createdate, modifyby, modifydate, ordenation) values ('0a4dc529-2c55-44c0-8d3a-abc8ef460cbc','unidade','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','a2be8133-9f59-4afe-876c-11d322956731','1658766035713','2');
