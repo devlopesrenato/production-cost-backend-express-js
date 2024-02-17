@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Production = require('../src/repositories/production.repository');
+const Production = require('../repositories/production.repository');
 
 router.get('/', Production.getProduction);
 

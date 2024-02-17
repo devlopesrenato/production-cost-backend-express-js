@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ExactMeasure = require('../src/repositories/exactMeasure.repository');
+const ExactMeasure = require('../repositories/exactMeasure.repository');
 
 router.get('/', ExactMeasure.getExactMeasure);
 

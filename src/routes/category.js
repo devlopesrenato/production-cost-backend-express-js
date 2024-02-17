@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Category = require('../src/repositories/category.repository');
+const Category = require('../repositories/category.repository');
 
 router.get('/', Category.getCategory);
 

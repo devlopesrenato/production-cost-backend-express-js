@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dash = require('../src/repositories/dashboard.repository');
+const dash = require('../repositories/dashboard.repository');
 
 router.get('/', dash.getDashboard);
 

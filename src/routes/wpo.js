@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const WPO = require('../src/repositories/wpo.repository');
+const WPO = require('../repositories/wpo.repository');
 
 router.get('/', WPO.getWPO);
 

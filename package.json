@@ -2,15 +2,13 @@
   "name": "api-custo-producao",
   "version": "1.0.0",
   "description": "API Custo de Produção",
-  "main": "server.js",
+  "main": "./src/main.js",
   "scripts": {
-    "start": "node server.js",
-    "start:dev": "npm install && nodemon server.js"
+    "start": "node main.js",
+    "start:dev": "npm install && nodemon main.js"
   },
   "keywords": [
     "node",
-    "cardapio",
-    "online",
     "api"
   ],
   "author": "devLopesRenato",
