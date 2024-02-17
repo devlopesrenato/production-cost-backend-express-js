@@ -1,6 +1,6 @@
 const express = require('express');
 
-class AppController {
+class AppInitializer {
     constructor() {
         this.router = express.Router();
         this.headerControl = express.Router();
@@ -44,4 +44,4 @@ class AppController {
     }
 }
 
-module.exports = AppController;
+module.exports = AppInitializer;
