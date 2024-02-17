@@ -1,5 +1,6 @@
 const express = require('express');
 const AppInitializer = require('./AppInitializer');
+const UsersController = require('./users/users.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
 const routeExactMeasure = require('./routes/exactMeasure');
@@ -18,6 +19,7 @@ class AppRouteManager {
     constructor() {
         this.router = express.Router();
         this.appInitializer = new AppInitializer();
+        this.usersController = new UsersController();
         this.setupRoutes();
     }
 
@@ -25,11 +27,12 @@ class AppRouteManager {
         // must be at the start 
         this.router.use(this.appInitializer.setHeaderControls());
 
+        this.router.use('/users', this.usersController.getRouter());
+
         // TO UPDATE
         this.router.use('/simplemeasure', routeSimpleMeasure);
         this.router.use('/exactmeasure', routeExactMeasure);
         this.router.use('/feedstock', routeFeedstock);
-        this.router.use('/users', routeUsers);
         this.router.use('/production', routeProduction);
         this.router.use('/feedstockused', routeFeedstockUsed);
         this.router.use('/wpoused', routeWPOUsed);
