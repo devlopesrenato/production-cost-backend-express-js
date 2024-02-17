@@ -4,7 +4,6 @@ const UsersController = require('./users/users.controller');
 const UnitsOfMeasurementController = require('./units-of-measurement/units-of-measurement.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
-const routeExactMeasure = require('./routes/exactMeasure');
 const routeFeedstock = require('./routes/feedstock');
 const routeProduction = require('./routes/production');
 const routeFeedstockUsed = require('./routes/feedstockUsed');
