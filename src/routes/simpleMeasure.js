@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const SimpleMeasure = require('../src/repositories/simpleMeasure.repository');
+const SimpleMeasure = require('../repositories/simpleMeasure.repository');
 
 router.get('/', SimpleMeasure.getSimpleMeasure);
 

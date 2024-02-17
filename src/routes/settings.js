@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const settings = require('../src/repositories/settings.repository');
+const settings = require('../repositories/settings.repository');
 
 router.get('/', settings.getSettings);
 

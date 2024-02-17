@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Feedstock = require('../src/repositories/feedstockUsed.repository');
+const Feedstock = require('../repositories/feedstockUsed.repository');
 
 router.get('/', Feedstock.getFeedstockUsed);
 
