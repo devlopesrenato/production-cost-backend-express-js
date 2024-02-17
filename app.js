@@ -12,18 +12,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(morgan('dev'));
 
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.setHeader("Access-Control-Allow-Headers", "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        return res.status(200).send({});
-    }
-    next();
-});
-
 const routeSimpleMeasure = require('./routes/simpleMeasure');
 const routeExactMeasure = require('./routes/exactMeasure');
 const routeFeedstock = require('./routes/feedstock');
@@ -49,16 +37,6 @@ app.use('/dashboard', routeDash);
 app.use('/category', routeCategory);
 app.use('/reports', routeReports);
 app.use('/settings', routeSettings);
-
-app.use('/api', (req, res, next) => {
-    res.status(200).send('API Custo de Produção');
-});
-
-app.use((req, res, next) => {
-    const erro = new Error('Endereço não encontrado');
-    erro.status = 404;
-    next(erro);
-});
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
