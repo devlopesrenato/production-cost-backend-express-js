@@ -1,5 +1,5 @@
 
-const { db } = require('../db');
+const database = require('../database');
 const { isEmpty, isZeroOrLess } = require('../utils');
 const { verifyJWT } = require('../utils/checkToken');
 
@@ -10,7 +10,7 @@ exports.getWPO = async (req, res, next) => {
         if (vToken.status === 401) { return res.status(401).send({ "error": 401, "message": vToken.message }) }
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
-            const result = await db.query(`SELECT F.uuid, F.name, F.quantity, F.price, F.type, F.active, U.name as createby, F.createdate, R.name as modifyby, F.modifydate FROM wpo F LEFT JOIN users U ON F.createby=CAST(U.uuid AS VARCHAR) LEFT JOIN users R ON F.modifyby=CAST(R.uuid AS VARCHAR) ORDER BY F.name;`);
+            const result = await database.raw(`SELECT F.uuid, F.name, F.quantity, F.price, F.type, F.active, U.name as createby, F.createdate, R.name as modifyby, F.modifydate FROM wpo F LEFT JOIN users U ON F.createby=CAST(U.uuid AS VARCHAR) LEFT JOIN users R ON F.modifyby=CAST(R.uuid AS VARCHAR) ORDER BY F.name;`);
             const response = {
                 length: result.rows.length,
                 wpo: result.rows
@@ -38,12 +38,12 @@ exports.postWPO = async (req, res, next) => {
                 return res.status(200).send({ "status": 200, "message": "Tipo deve ser manual ou distribuído" });
             }
 
-            const resultDesc = await db.query("SELECT * FROM wpo WHERE name='" + [req.body.name] + "'")
+            const resultDesc = await database.raw("SELECT * FROM wpo WHERE name='" + [req.body.name] + "'")
             if (resultDesc.rowCount > 0) {
                 return res.status(200).send({ "status": 200, "message": "Essa descrição já existe" });
             } else {
 
-                await db.query("INSERT INTO wpo (name, quantity, price, type, createby, createdate, modifyby, modifydate) VALUES ('" + [req.body.name] + "','" + [req.body.quantity] + "','" + [req.body.price] + "','" + [req.body.type] + "','" + vToken.id + "','" + Date.now() + "','" + vToken.id + "','" + Date.now() + "');");
+                await database.raw("INSERT INTO wpo (name, quantity, price, type, createby, createdate, modifyby, modifydate) VALUES ('" + [req.body.name] + "','" + [req.body.quantity] + "','" + [req.body.price] + "','" + [req.body.type] + "','" + vToken.id + "','" + Date.now() + "','" + vToken.id + "','" + Date.now() + "');");
                 return res.status(201).send({ "status": 201, "message": "Dados inseridos com sucesso" });
 
             }
@@ -72,17 +72,17 @@ exports.updateWPO = async (req, res, next) => {
                     return res.status(200).send({ "status": 200, "message": "A quantidade deve ser maior que 0" });
                 } else {
 
-                    const findId = await db.query("SELECT name FROM wpo WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
+                    const findId = await database.raw("SELECT name FROM wpo WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
                     if (findId.rowCount === 0) {
                         return res.status(200).send({ "status": 200, "message": "UUID não encontrado" });
                     } else {
 
-                        const resultDesc = await db.query("SELECT * FROM wpo WHERE name='" + [req.body.name] + "' AND uuid <> '" + [req.body.uuid] + "'")
+                        const resultDesc = await database.raw("SELECT * FROM wpo WHERE name='" + [req.body.name] + "' AND uuid <> '" + [req.body.uuid] + "'")
                         if (resultDesc.rowCount > 0) {
                             return res.status(200).send({ "status": 200, "message": "Essa descrição já existe" });
                         } else {
 
-                            await db.query(`
+                            await database.raw(`
                                 UPDATE wpo 
                                 SET 
                                     name='${req.body.name}', 
@@ -112,17 +112,17 @@ exports.deleteWPO = async (req, res, next) => {
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
 
-            const findId = await db.query("SELECT name FROM wpo WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
+            const findId = await database.raw("SELECT name FROM wpo WHERE CAST(uuid AS VARCHAR)=CAST('" + [req.body.uuid] + "' AS VARCHAR);")
             if (findId.rowCount === 0) {
                 return res.status(200).send({ "status": 200, "message": "UUID não encontrado" });
             } else {
 
-                const resultMeasureUsed = await db.query("SELECT * FROM wpoused WHERE wpoid='" + [req.body.uuid] + "';")
+                const resultMeasureUsed = await database.raw("SELECT * FROM wpoused WHERE wpoid='" + [req.body.uuid] + "';")
                 if (resultMeasureUsed.rowCount !== 0) {
                     return res.status(200).send({ "status": 200, "message": "Custo sendo utilizado por Produção" });
                 } else {
 
-                    await db.query("DELETE FROM wpo WHERE uuid='" + [req.body.uuid] + "';")
+                    await database.raw("DELETE FROM wpo WHERE uuid='" + [req.body.uuid] + "';")
                     return res.status(201).send({ "status": 201, "message": "Dados excluidos com sucesso" });
 
                 }

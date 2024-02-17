@@ -1,4 +1,4 @@
-const { db } = require('../db');
+const database = require('../database');
 const { verifyJWT } = require('../utils/checkToken');
 
 exports.getSettings = async (req, res, next) => {
@@ -7,7 +7,7 @@ exports.getSettings = async (req, res, next) => {
         if (vToken.status === 401) { return res.status(401).send({ "error": 401, "message": vToken.message }) }
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
-            const result = await db.query(`
+            const result = await database.raw(`
                 SELECT 
                     uuid, 
                     id,
@@ -43,7 +43,7 @@ exports.getSettingById = async (req, res, next) => {
                 return res.status(400).send({ "error": 400, "message": "id deve ser um numero" })
             }
 
-            const result = await db.query(`
+            const result = await database.raw(`
                 SELECT 
                     uuid, 
                     id,
@@ -94,7 +94,7 @@ exports.postSettings = async (req, res, next) => {
                     }
                 })
             }
-            const already = await db.query(`
+            const already = await database.raw(`
             SELECT * FROM settings WHERE id = ${id}
             `)
             if (already.rowCount) {
@@ -105,14 +105,14 @@ exports.postSettings = async (req, res, next) => {
 
                 })
             }
-            await db.query(`
+            await database.raw(`
                 INSERT INTO settings (
                     id, description, value, active
                 ) values (
                     ${id}, '${description}', '${value}', ${active}
                 )
             `);
-            const created = await db.query(`
+            const created = await database.raw(`
             SELECT * FROM settings WHERE id = ${id}
             `)
             if (!created.rowCount) {
@@ -156,7 +156,7 @@ exports.putSettings = async (req, res, next) => {
                     }
                 })
             }
-            const exists = await db.query(`
+            const exists = await database.raw(`
             SELECT * FROM settings WHERE id = ${id}
             `)
             if (!exists.rowCount) {
@@ -165,7 +165,7 @@ exports.putSettings = async (req, res, next) => {
                     "message": "Parâmetro não encontrado",
                 })
             }
-            await db.query(`
+            await database.raw(`
                 UPDATE settings
                 SET updateat=NOW()
                     ${description ? `,description='${description}'` : ''}
@@ -173,7 +173,7 @@ exports.putSettings = async (req, res, next) => {
                     ${active ? `,active='${active}'` : ''}
                 WHERE id=${id}
             `);
-            const updated = await db.query(`
+            const updated = await database.raw(`
             SELECT * FROM settings WHERE id = ${id}
             `)
             if (!updated.rowCount) {
