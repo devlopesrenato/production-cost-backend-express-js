@@ -13,7 +13,7 @@ class UsersService {
     async login(loginDto) {
         const user = await this.usersRepository.getByNickName(loginDto.user);
         if (!user) {
-            throw new NotFoundError("User not found");
+            throw new UnauthorizedError("Invalid credentials");
         }
 
         await this.checkPassword(loginDto.password, user);
