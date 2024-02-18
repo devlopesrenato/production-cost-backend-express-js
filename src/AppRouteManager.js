@@ -3,6 +3,7 @@ const AppInitializer = require('./AppInitializer');
 const UsersController = require('./users/users.controller');
 const UnitsOfMeasurementController = require('./units-of-measurement/units-of-measurement.controller');
 const ProductionsController = require('./productions/productions.controller')
+const CategoriesController = require('./categories/categories.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
 const routeFeedstock = require('./routes/feedstock');
@@ -10,7 +11,6 @@ const routeFeedstockUsed = require('./routes/feedstockUsed');
 const routeWPOUsed = require('./routes/wpoUsed');
 const routeWPOU = require('./routes/wpo');
 const routeDash = require('./routes/dashboard');
-const routeCategory = require('./routes/category');
 const routeReports = require('./routes/reports');
 const routeSettings = require('./routes/settings');
 
@@ -20,6 +20,7 @@ class AppRouteManager {
         this.usersController = new UsersController();
         this.unitsOfMeasurementController = new UnitsOfMeasurementController();
         this.productionsController = new ProductionsController();
+        this.categoriesController = new CategoriesController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -31,6 +32,7 @@ class AppRouteManager {
         this.router.use('/users', this.usersController.getRouter());
         this.router.use('/unitsOfMeasurement', this.unitsOfMeasurementController.getRouter());
         this.router.use('/production', this.productionsController.getRouter());
+        this.router.use('/category', this.categoriesController.getRouter());
 
         // TO UPDATE
         this.router.use('/simplemeasure', routeSimpleMeasure);
@@ -39,7 +41,6 @@ class AppRouteManager {
         this.router.use('/wpoused', routeWPOUsed);
         this.router.use('/wpo', routeWPOU);
         this.router.use('/dashboard', routeDash);
-        this.router.use('/category', routeCategory);
         this.router.use('/reports', routeReports);
         this.router.use('/settings', routeSettings);
         // TO UPDATE

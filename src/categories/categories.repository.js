@@ -8,18 +8,17 @@ class CategoriesRepository {
 
     async getAll() {
         try {
-            return this.database
+            return this.database('categories as C')
                 .select(
                     'C.uuid',
                     'C.name',
                     'C.createById',
-                    { createBy: 'U.name' },
+                    { createBy: 'UC.name' },
                     'C.createDate',
                     'C.modifyById',
-                    { modifyBy: 'R.name' },
+                    { modifyBy: 'UU.name' },
                     'C.modifyDate'
                 )
-                .from('categories C')
                 .leftJoin('users AS UC', 'UC.uuid', 'C.createById')
                 .leftJoin('users AS UU', 'UU.uuid', 'C.modifyById')
                 .orderBy('C.name');
@@ -84,7 +83,7 @@ class CategoriesRepository {
 
     async create({ name, userId }) {
         try {
-            const insertedIds = await this.database('categories')
+            await this.database('categories')
                 .insert({
                     name,
                     createById: userId,
@@ -93,7 +92,7 @@ class CategoriesRepository {
                     modifyDate: database.fn.now()
                 })
 
-            return this.getOne(insertedIds[0]);
+            return this.getByName(name);
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to create category")
@@ -122,8 +121,8 @@ class CategoriesRepository {
             const deleted = await this.getOne(uuid);
 
             await database('categories')
-            .where('uuid', uuid)
-            .delete();
+                .where('uuid', uuid)
+                .delete();
 
             return deleted;
         } catch (err) {
