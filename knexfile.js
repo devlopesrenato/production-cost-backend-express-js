@@ -37,6 +37,7 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
+      host: process.env.PRD_PG_HOST,
       database: process.env.PRD_PG_DATABASE,
       user: process.env.PRD_PG_USER,
       password: process.env.PRD_PG_PASSWORD,
