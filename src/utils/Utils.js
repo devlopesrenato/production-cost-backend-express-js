@@ -30,7 +30,7 @@ exports.paramsValidator = (paramTypes = [], params = {}) => {
 
                     case 'isUUID':
                         if (!exports.isUUID(params[name])) {
-                            throw new BadRequestError("Invalid uuid");
+                            throw new BadRequestError(`Invalid ${name}`);
                         }
                         break;
 

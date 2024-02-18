@@ -29,40 +29,35 @@ exports.postFeedstock = async (req, res, next) => {
         else if (vToken.status === 500) { return res.status(500).send({ "error": 500, "message": vToken.message }) }
         else if (vToken.status === 200) {
 
-            if (isEmpty(req.body.name) || isEmpty(req.body.measurement) || isEmpty(req.body.quantity) || isEmpty(req.body.price)) {
-                return res.status(200).send({ "status": 200, "message": "Descrição, Medida, Quantidade e Preço não podem ser null ou vazios" });
-            } else {
+            // if (isEmpty(req.body.name) || isEmpty(req.body.measurement) || isEmpty(req.body.quantity) || isEmpty(req.body.price)) {
+            //     return res.status(200).send({ "status": 200, "message": "Descrição, Medida, Quantidade e Preço não podem ser null ou vazios" });
+            // }
 
-                if (isZeroOrLess(req.body.quantity)) {
-                    return res.status(200).send({ "status": 200, "message": "A quantidade deve ser maior que 0" });
-                } else {
+            // if (isZeroOrLess(req.body.quantity)) {
+            //     return res.status(200).send({ "status": 200, "message": "A quantidade deve ser maior que 0" });
+            // }
 
-                    if (isZeroOrLess(req.body.price)) {
-                        return res.status(200).send({ "status": 200, "message": "O preço deve ser maior que 0" });
-                    } else {
+            // if (isZeroOrLess(req.body.price)) {
+            //     return res.status(200).send({ "status": 200, "message": "O preço deve ser maior que 0" });
+            // }
 
-                        const resultDesc = await database.raw("SELECT * FROM feedstock WHERE name='" + [req.body.name] + "'")
-                        if (resultDesc.rowCount > 0) {
-                            return res.status(200).send({ "status": 200, "message": "Essa descrição já existe" });
-                        } else {
+            // const resultDesc = await database.raw("SELECT * FROM feedstock WHERE name='" + [req.body.name] + "'")
+            // if (resultDesc.rowCount > 0) {
+            //     return res.status(200).send({ "status": 200, "message": "Essa descrição já existe" });
+            // }
 
-                            const resMeasure = await database.raw(`SELECT * FROM simplemeasure WHERE CAST(uuid as VARCHAR)='${req.body.measurement}';`);
-                            if (resMeasure.rowCount === 0) {
-                                return res.status(200).send({ "status": 200, "message": "Medida não encontrada" });
-                            } else {
+            // const resMeasure = await database.raw(`SELECT * FROM simplemeasure WHERE CAST(uuid as VARCHAR)='${req.body.measurement}';`);
+            // if (resMeasure.rowCount === 0) {
+            //     return res.status(200).send({ "status": 200, "message": "Medida não encontrada" });
+            // }
 
-                                await database.raw("INSERT INTO feedstock (name, measurement, quantity, price, createby, createdate, modifyby, modifydate) VALUES ('" + [req.body.name] + "','" + [req.body.measurement] + "','" + [req.body.quantity] + "','" + [req.body.price] + "','" + vToken.id + "','" + Date.now() + "','" + vToken.id + "','" + Date.now() + "');");
-                                return res.status(201).send({ "status": 201, "message": "Dados inseridos com sucesso" });
+            await database.raw("INSERT INTO feedstocks (name, \"customMeasurementId\", quantity, price, \"createById\", \"createDate\", \"modifyById\", \"modifyDate\") VALUES ('" + [req.body.name] + "','" + [req.body.customMeasurementId] + "','" + [req.body.quantity] + "','" + [req.body.price] + "','" + vToken.id + "',NOW(),'" + vToken.id + "',NOW());");
+            return res.status(201).send({ "status": 201, "message": "Dados inseridos com sucesso" });
 
-                            }
-                        }
-                    }
-                }
-            }
         }
 
     } catch (error) {
-        return res.status(500).send({ 'Error': error.code, 'message': error.error });
+        return res.status(500).send({ 'Error': error.code, 'message': error.message });
     }
 
 }
