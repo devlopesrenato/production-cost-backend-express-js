@@ -11,8 +11,7 @@ const OtherCostsController = require('./other-costs/other-costs.controller');
 const CustomMeasurementsController = require('./custom-measurements/custom-measurements.controller');
 const ParametersController = require('./parameters/parameters.controller');
 const DashboardController = require('./dashboard/dashboard.controller');
-
-const routeReports = require('./routes/reports');
+const ReportsController = require('./reports/reports.controller');
 
 class AppRouteManager {
     constructor() {
@@ -28,6 +27,7 @@ class AppRouteManager {
         this.customMeasurementsController = new CustomMeasurementsController();
         this.parametersController = new ParametersController();
         this.dashboardController = new DashboardController();
+        this.reportsController = new ReportsController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -47,10 +47,7 @@ class AppRouteManager {
         this.router.use('/category', this.categoriesController.getRouter());
         this.router.use('/parameters', this.parametersController.getRouter());
         this.router.use('/dashboard', this.dashboardController.getRouter());
-
-        // TO UPDATE
-        this.router.use('/reports', routeReports);
-        // TO UPDATE
+        this.router.use('/reports', this.reportsController.getRouter());
 
         // must be at the end 
         this.router.use(this.appInitializer.getRouter());
