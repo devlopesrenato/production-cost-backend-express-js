@@ -12,18 +12,21 @@ class DashboardService {
         try {
             const productions = await this.productionsService.getAll();
             const parameterMargin = await this.parametersRepository.getById(1);
-            const margin = parameterMargin.value;
+            const margin = Number(parameterMargin.value);
 
-            const productionsPerCost = productions
+            const _prodPerCost = [...productions];
+            const productionsPerCost = _prodPerCost
                 .filter(({ cost }) => cost > 0)
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 8)
                 .map(({ uuid, name, price: value }) => ({ uuid, name, value }));
-            const productionsBelowTheMargin = productions
+
+            const _prodBellowMargin = [...productions];
+            const productionsBelowMargin = _prodBellowMargin
                 .filter(({ percent }) => percent < margin)
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 8)
-                .map(({ uuid, name, cost: value }) => ({ uuid, name, value }));
+                .map(({ uuid, name, percent: value }) => ({ uuid, name, value }));
 
             return [
                 {
@@ -33,7 +36,7 @@ class DashboardService {
                 },
                 {
                     name: `Productions with a margin below ${margin}%:`,
-                    data: productionsBelowTheMargin,
+                    data: productionsBelowMargin,
                     typeValue: "%"
                 },
             ];
