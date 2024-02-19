@@ -49,7 +49,7 @@ class ProductionsService {
         if (already) {
             throw new ConflictError("A production with this name already exists");
         }
-        const category = await this.categoryRepository.getOne(createProductionDto.categoryId);        
+        const category = await this.categoryRepository.getOne(createProductionDto.categoryId);
         if (!category) {
             throw new NotFoundError("Category not found");
         }
@@ -57,6 +57,10 @@ class ProductionsService {
         if (created.error) {
             throw new NotFoundError("Error creating production");
         }
+        if (createProductionDto.quantity < 1) {
+            throw new BadRequestError("Quantity cannot be less than 1")
+        }
+
         return created;
     }
 
@@ -77,6 +81,10 @@ class ProductionsService {
                 throw new NotFoundError("Category not found");
             }
         }
+        if (updateProductionDto.quantity && updateProductionDto.quantity < 1) {
+            throw new BadRequestError("Quantity cannot be less than 1")
+        }
+
         return this.productionsRepository.update(uuid, updateProductionDto)
     }
 

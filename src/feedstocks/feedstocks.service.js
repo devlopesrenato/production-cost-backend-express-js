@@ -34,10 +34,10 @@ class FeedstocksService {
         }
 
         if (quantity < 0) {
-            throw new BadRequestError("Quantity cannot be less than 1")
+            throw new BadRequestError("Quantity cannot be less than 0")
         }
         if (price < 0) {
-            throw new BadRequestError("Price cannot be less than 1")
+            throw new BadRequestError("Price cannot be less than 0")
         }
         return this.feedstockRepository.create(createFeedstockDto);
     }
@@ -56,11 +56,11 @@ class FeedstocksService {
         }
 
         if (quantity && quantity < 0) {
-            throw new BadRequestError("Quantity cannot be less than 1")
+            throw new BadRequestError("Quantity cannot be less than 0")
         }
 
         if (price && price < 0) {
-            throw new BadRequestError("Price cannot be less than 1")
+            throw new BadRequestError("Price cannot be less than 0")
         }
 
         if (customMeasurementId) {

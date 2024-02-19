@@ -3,6 +3,7 @@ const ProductionsRepository = require('../productions/productions.repository');
 const FeedstocksRepository = require('../feedstocks/feedstocks.repository');
 const ConflictError = require('../common/errors/types/ConflictError');
 const NotFoundError = require('../common/errors/types/NotFoundError');
+const BadRequestError = require('../common/errors/types/BadRequestError');
 
 class ProductionFeedstocksService {
     constructor() {
@@ -36,6 +37,11 @@ class ProductionFeedstocksService {
         if (!feedstock) {
             throw new NotFoundError("Feedstock not found")
         }
+
+        if (createProductionFeedstockDto.quantity < 0) {
+            throw new BadRequestError("Quantity cannot be less than 0")
+        }
+
         return this.productionFeedstockRepository.create(createProductionFeedstockDto);
     }
 
@@ -44,6 +50,10 @@ class ProductionFeedstocksService {
         if (!productionFeedstock) {
             throw new NotFoundError("Production feedstock not found")
         }
+        if (updateProductionFeedstockDto.quantity && updateProductionFeedstockDto.quantity < 0) {
+            throw new BadRequestError("Quantity cannot be less than 0")
+        }
+
         return this.productionFeedstockRepository.update(uuid, updateProductionFeedstockDto);
     }
 

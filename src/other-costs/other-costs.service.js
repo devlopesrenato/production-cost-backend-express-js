@@ -28,10 +28,10 @@ class OtherCostsService {
         }
 
         if (quantity < 0) {
-            throw new BadRequestError("Quantity cannot be less than 1")
+            throw new BadRequestError("Quantity cannot be less than 0")
         }
         if (price < 0) {
-            throw new BadRequestError("Price cannot be less than 1")
+            throw new BadRequestError("Price cannot be less than 0")
         }
         if (!['manual', 'distributed'].includes(type)) {
             throw new BadRequestError("The type parameter must be 'manual' or 'distributed'")
@@ -53,7 +53,7 @@ class OtherCostsService {
         }
 
         if (quantity && quantity < 0) {
-            throw new BadRequestError("Quantity cannot be less than 1")
+            throw new BadRequestError("Quantity cannot be less than 0")
         }
 
         if (quantity && otherCosts.type === "distributed") {
@@ -61,7 +61,7 @@ class OtherCostsService {
         }
 
         if (price && price < 0) {
-            throw new BadRequestError("Price cannot be less than 1")
+            throw new BadRequestError("Price cannot be less than 0")
         }
 
         return this.otherCostsRepository.update(uuid, updateOtherCostDto);

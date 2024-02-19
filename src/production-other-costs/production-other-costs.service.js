@@ -36,6 +36,11 @@ class ProductionOtherCostsService {
         if (!otherCost) {
             throw new NotFoundError("OtherCost not found")
         }
+
+        if (createProductionOtherCostDto.quantity < 0) {
+            throw new BadRequestError("Quantity cannot be less than 0")
+        }
+
         return this.productionOtherCostRepository.create(createProductionOtherCostDto);
     }
 
@@ -44,6 +49,10 @@ class ProductionOtherCostsService {
         if (!productionOtherCost) {
             throw new NotFoundError("Production otherCost not found")
         }
+        if (updateProductionOtherCostDto.quantity && updateProductionOtherCostDto.quantity < 0) {
+            throw new BadRequestError("Quantity cannot be less than 0")
+        }
+
         return this.productionOtherCostRepository.update(uuid, updateProductionOtherCostDto);
     }
 
