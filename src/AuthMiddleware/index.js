@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../common/errors/types/UnauthorizedError');
 const InternalServerError = require('../common/errors/types/InternalServerError');
 const UsersRepository = require('../users/users.repository');
+const BadRequestError = require('../common/errors/types/BadRequestError');
 require('dotenv').config()
 
 class AuthMiddleware {
@@ -10,33 +11,34 @@ class AuthMiddleware {
         this.usersRepository = new UsersRepository();
     }
 
-    async verifyJWT(req, next) {
+    async verifyJWT(request, next) {
         try {
-            const token = req.headers.authorization;
-            if (!token) {
-                throw new UnauthorizedError("Token not sent")
-            };
-
-            jwt.verify(token, `${this.secret}`, function (err, decoded) {
-                if (err) {
-                    throw new UnauthorizedError("Invalid JWT token")
-                }
-                req.userId = decoded.id;
-            });
-            
-            const user = await this.usersRepository.getById(req.userId);
+            const token = this.jwtExtractor(request);
+            const decodedToken = await this.jwtDecoder(token);            
+            const user = await this.usersRepository.getById(decodedToken.id);
             if (!user) {
-                throw new UnauthorizedError("Invalid JWT token")
+                throw new UnauthorizedError("User not found");
             }
+            request.userId = decodedToken.id;
         } catch (error) {
+            console.log(error)
             next(error)
         } finally {
             next()
         }
     }
 
-    decodeJWT(token) {
-        jwt.verify(token, `${this.secret}`, function (err, decoded) {
+    jwtExtractor(request) {
+        const authHeader = request.headers.authorization;
+        if (!authHeader) {
+            throw new BadRequestError('Token not sent.');
+        }
+        const [, token] = authHeader.split(' ');
+        return token;
+    }
+
+    async jwtDecoder(token) {
+        return jwt.verify(token, `${this.secret}`, function (err, decoded) {
             if (err) {
                 throw new UnauthorizedError("Invalid JWT token")
             }
