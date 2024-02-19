@@ -5,9 +5,9 @@ const UnitsOfMeasurementController = require('./units-of-measurement/units-of-me
 const ProductionsController = require('./productions/productions.controller')
 const CategoriesController = require('./categories/categories.controller');
 const ProductionFeedstocksController = require('./production-feedstocks/production-feedstocks.controller');
+const FeedstocksController = require('./feedstocks/feedstocks.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
-const routeFeedstock = require('./routes/feedstock');
 const routeWPOUsed = require('./routes/wpoUsed');
 const routeWPOU = require('./routes/wpo');
 const routeDash = require('./routes/dashboard');
@@ -22,6 +22,7 @@ class AppRouteManager {
         this.productionsController = new ProductionsController();
         this.categoriesController = new CategoriesController();
         this.productionFeedstocksController = new ProductionFeedstocksController();
+        this.feedstocksController = new FeedstocksController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -35,10 +36,10 @@ class AppRouteManager {
         this.router.use('/production', this.productionsController.getRouter());
         this.router.use('/category', this.categoriesController.getRouter());
         this.router.use('/production-feedstock', this.productionFeedstocksController.getRouter());
+        this.router.use('/feedstock', this.feedstocksController.getRouter());
 
         // TO UPDATE
         this.router.use('/simplemeasure', routeSimpleMeasure);
-        this.router.use('/feedstock', routeFeedstock);
         this.router.use('/wpoused', routeWPOUsed);
         this.router.use('/wpo', routeWPOU);
         this.router.use('/dashboard', routeDash);

@@ -24,7 +24,7 @@ class UnitsOfMeasurementRepository {
                 .orderBy('E.ordering');
         } catch (error) {
             console.log(error)
-            throw new InternalServerError("Failed to get exact measurements")
+            throw new InternalServerError("Failed to get units of measurements")
         }
     }
 

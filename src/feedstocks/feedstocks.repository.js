@@ -12,12 +12,14 @@ class FeedstocksRepository {
                 .select(
                     'F.uuid',
                     'F.name',
+                    'F.price',
+                    'F.quantity',
                     'F.customMeasurementId',
                     'CM.name as customMeasurement',
-                    'F.quantity',
-                    'F.price',
+                    'F.createById',
                     'UC.name as createBy',
                     'F.createDate',
+                    'F.modifyById',
                     'UU.name as modifyBy',
                     'F.modifyDate',
                 )
@@ -37,12 +39,14 @@ class FeedstocksRepository {
                 .select(
                     'F.uuid',
                     'F.name',
+                    'F.price',
+                    'F.quantity',
                     'F.customMeasurementId',
                     'CM.name as customMeasurement',
-                    'F.quantity',
-                    'F.price',
+                    'F.createById',
                     'UC.name as createBy',
                     'F.createDate',
+                    'F.modifyById',
                     'UU.name as modifyBy',
                     'F.modifyDate',
                     this.database.raw('COUNT("PF"."feedstockId") AS used')
@@ -77,12 +81,14 @@ class FeedstocksRepository {
                 .select(
                     'F.uuid',
                     'F.name',
+                    'F.price',
+                    'F.quantity',
                     'F.customMeasurementId',
                     'CM.name as customMeasurement',
-                    'F.quantity',
-                    'F.price',
+                    'F.createById',
                     'UC.name as createBy',
                     'F.createDate',
+                    'F.modifyById',
                     'UU.name as modifyBy',
                     'F.modifyDate',
                     this.database.raw('COUNT("PF"."feedstockId") AS used')
@@ -120,7 +126,7 @@ class FeedstocksRepository {
                 price: price,
                 createById: userId,
                 createDate: database.fn.now(),
-                modifyBy: userId,
+                modifyById: userId,
                 modifyDate: database.fn.now()
             });
             const created = await this.getByName(name);
@@ -131,7 +137,7 @@ class FeedstocksRepository {
         }
     }
 
-    async update(uuid, { name, measurement, quantity, price, userId }) {
+    async update(uuid, { name, customMeasurementId, quantity, price, userId }) {
         try {
             await this.database('feedstocks')
                 .where('uuid', uuid)
@@ -139,7 +145,7 @@ class FeedstocksRepository {
                     modifyDate: this.database.fn.now(),
                     modifyById: userId,
                     ...(name && { name: name }),
-                    ...(customMeasurementId && { customMeasurementId: customMeasurementId }),
+                    ...(customMeasurementId && { customMeasurementId }),
                     ...(quantity && { quantity: quantity }),
                     ...(price && { price: price })
                 });

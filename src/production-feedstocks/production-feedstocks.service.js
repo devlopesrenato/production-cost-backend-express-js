@@ -23,20 +23,20 @@ class ProductionFeedstocksService {
         return productionFeedstock;
     }
 
-    async create(updateProductionFeedstockDto) {
-        const already = await this.productionFeedstockRepository.getByRelations(updateProductionFeedstockDto);
+    async create(createProductionFeedstockDto) {
+        const already = await this.productionFeedstockRepository.getByRelations(createProductionFeedstockDto);
         if (already) {
             throw new ConflictError("A Production-Feedstock already exists")
         }
-        const production = await this.productionRepository.getOne(updateProductionFeedstockDto.productionId);
+        const production = await this.productionRepository.getOne(createProductionFeedstockDto.productionId);
         if (!production) {
             throw new NotFoundError("Production not found")
         }
-        const feedstock = await this.feedstockRepository.getOne(updateProductionFeedstockDto.feedstockId);
+        const feedstock = await this.feedstockRepository.getOne(createProductionFeedstockDto.feedstockId);
         if (!feedstock) {
             throw new NotFoundError("Feedstock not found")
         }
-        return this.productionFeedstockRepository.create(updateProductionFeedstockDto);
+        return this.productionFeedstockRepository.create(createProductionFeedstockDto);
     }
 
     async update(uuid, updateProductionFeedstockDto) {
