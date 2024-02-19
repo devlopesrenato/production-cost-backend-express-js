@@ -9,11 +9,10 @@ const FeedstocksController = require('./feedstocks/feedstocks.controller');
 const ProductionOtherCostsController = require('./production-other-costs/production-feedstocks.controller');
 const OtherCostsController = require('./other-costs/other-costs.controller');
 const CustomMeasurementsController = require('./custom-measurements/custom-measurements.controller');
+const ParametersController = require('./parameters/parameters.controller');
 
-const routeSimpleMeasure = require('./routes/simpleMeasure');
 const routeDash = require('./routes/dashboard');
 const routeReports = require('./routes/reports');
-const routeSettings = require('./routes/settings');
 
 class AppRouteManager {
     constructor() {
@@ -27,6 +26,7 @@ class AppRouteManager {
         this.productionOtherCostsController = new ProductionOtherCostsController();
         this.otherCostsController = new OtherCostsController();
         this.customMeasurementsController = new CustomMeasurementsController();
+        this.parametersController = new ParametersController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -36,19 +36,19 @@ class AppRouteManager {
         this.router.use(this.appInitializer.setHeaderControls());
 
         this.router.use('/users', this.usersController.getRouter());
-        this.router.use('/unitsOfMeasurement', this.unitsOfMeasurementController.getRouter());
         this.router.use('/production', this.productionsController.getRouter());
-        this.router.use('/category', this.categoriesController.getRouter());
         this.router.use('/production-feedstock', this.productionFeedstocksController.getRouter());
         this.router.use('/feedstock', this.feedstocksController.getRouter());
         this.router.use('/production-otherCost', this.productionOtherCostsController.getRouter());
         this.router.use('/otherCost', this.otherCostsController.getRouter());
         this.router.use('/customMeasurement', this.customMeasurementsController.getRouter());
+        this.router.use('/unitsOfMeasurement', this.unitsOfMeasurementController.getRouter());
+        this.router.use('/category', this.categoriesController.getRouter());
+        this.router.use('/parameters', this.parametersController.getRouter());
 
         // TO UPDATE
         this.router.use('/dashboard', routeDash);
         this.router.use('/reports', routeReports);
-        this.router.use('/settings', routeSettings);
         // TO UPDATE
 
         // must be at the end 
