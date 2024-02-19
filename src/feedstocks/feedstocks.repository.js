@@ -24,7 +24,7 @@ class FeedstocksRepository {
                     'F.modifyDate',
                 )
                 .leftJoin('users AS UC', 'UC.uuid', 'F.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'F.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'F.modifyById')
                 .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
                 .orderBy('F.name');
         } catch (error) {
@@ -52,7 +52,7 @@ class FeedstocksRepository {
                     this.database.raw('COUNT("PF"."feedstockId") AS used')
                 )
                 .leftJoin('users AS UC', 'UC.uuid', 'F.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'F.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'F.modifyById')
                 .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
                 .leftJoin('productionFeedstocks as PF', 'PF.feedstockId', 'F.uuid')
                 .where('F.uuid', uuid)
@@ -94,7 +94,7 @@ class FeedstocksRepository {
                     this.database.raw('COUNT("PF"."feedstockId") AS used')
                 )
                 .leftJoin('users AS UC', 'UC.uuid', 'F.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'F.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'F.modifyById')
                 .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
                 .leftJoin('productionFeedstocks as PF', 'PF.feedstockId', 'F.uuid')
                 .where('F.name', name)

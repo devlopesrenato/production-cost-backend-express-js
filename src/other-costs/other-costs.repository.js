@@ -16,14 +16,16 @@ class OtherCostsRepository {
                     'OC.price',
                     'OC.active',
                     'OC.type',
-                    'UC.name as createBy',
+                    'OC.createById',
+                    { createBy: 'UC.name' },
                     'OC.createDate',
-                    'UU.name as modifyBy',
+                    'OC.modifyById',
+                    { modifyBy: 'UU.name' },
                     'OC.modifyDate',
                 )
-                .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'OC.modifyById')
-                .orderBy('OC.name');
+                .leftJoin('users as UC', 'UC.uuid', 'OC.createById')
+                .leftJoin('users as UU', 'UU.uuid', 'OC.modifyById')
+                .orderBy('OC.name', 'asc');
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to get otherCost")
@@ -53,7 +55,7 @@ class OtherCostsRepository {
                 )
                 .leftJoin('productionOtherCosts as POC', 'POC.otherCostId', 'OC.uuid')
                 .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'OC.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'OC.modifyById')
                 .where(getWhere)
                 .groupBy(
                     'OC.uuid',
@@ -92,7 +94,7 @@ class OtherCostsRepository {
                 )
                 .leftJoin('productionOtherCosts as POC', 'POC.otherCostId', 'OC.uuid')
                 .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'OC.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'OC.modifyById')
                 .where('OC.uuid', uuid)
                 .groupBy(
                     'OC.uuid',
@@ -131,7 +133,7 @@ class OtherCostsRepository {
                 )
                 .leftJoin('productionOtherCosts as POC', 'POC.otherCostId', 'OC.uuid')
                 .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
-                .leftJoin('users AS UU', 'UC.uuid', 'OC.modifyById')
+                .leftJoin('users AS UU', 'UU.uuid', 'OC.modifyById')
                 .where('OC.name', name)
                 .groupBy(
                     'OC.uuid',
@@ -155,7 +157,7 @@ class OtherCostsRepository {
     async create({ name, quantity, price, type, userId }) {
         try {
             await this.database('otherCosts').insert({
-                name,                
+                name,
                 quantity,
                 price,
                 active: true,
@@ -173,7 +175,7 @@ class OtherCostsRepository {
         }
     }
 
-    async update(uuid, { name, quantity, price, active, type, userId }) {
+    async update(uuid, { name, quantity, price, active, userId }) {
         try {
             await this.database('otherCosts')
                 .where('uuid', uuid)
@@ -183,8 +185,7 @@ class OtherCostsRepository {
                     ...(name && { name }),
                     ...(quantity && { quantity: quantity }),
                     ...(price && { price: price }),
-                    ...(active && { active }),
-                    ...(type && { type }),
+                    ...(active !== undefined && { active }),
                 });
             const updated = await this.getOne(uuid);
             return updated;

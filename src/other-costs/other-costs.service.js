@@ -45,7 +45,7 @@ class OtherCostsService {
             throw new NotFoundError("OtherCost not found")
         }
 
-        const { name, quantity, price, customMeasurementId } = updateOtherCostDto;
+        const { name, quantity, price } = updateOtherCostDto;
 
         const alreadyExists = await this.otherCostsRepository.getByName(name);
         if (alreadyExists && alreadyExists.uuid !== uuid) {
@@ -54,6 +54,10 @@ class OtherCostsService {
 
         if (quantity && quantity < 0) {
             throw new BadRequestError("Quantity cannot be less than 1")
+        }
+
+        if (quantity && otherCosts.type === "distributed") {
+            throw new BadRequestError("Quantity cannot be changed for distributed type")
         }
 
         if (price && price < 0) {

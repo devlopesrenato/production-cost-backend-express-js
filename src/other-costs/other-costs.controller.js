@@ -70,6 +70,7 @@ class OtherCostsController {
                     { name: "name", type: "string", rules: ["isNotEmpty", "isOptional"] },
                     { name: "quantity", type: "number", rules: ["isNotEmpty", "isOptional"] },
                     { name: "price", type: "number", rules: ["isNotEmpty", "isOptional"] },
+                    { name: "active", type: "boolean", rules: ["isNotEmpty", "isOptional"] },
                 ], req.body);
 
                 const result = await this.service.update(req.params.uuid, { ...req.body, userId: req.userId })
