@@ -27,16 +27,15 @@ class ProductionOtherCostsRepository {
 
     async getOne(uuid) {
         try {
-            return this.database
+            return database('productionOtherCosts as POC')
                 .select(
-                    'POC.uuid,',
+                    'POC.uuid',
                     'POC.otherCostId',
                     'OC.name AS otherCost',
-                    '(CAST(OC.price AS FLOAT) / CAST(OC.quantity AS FLOAT)) * CAST(POC.quantity AS FLOAT) AS price',
+                    this.database.raw('(("OC"."price" / "OC"."quantity") * "POC"."quantity") AS price'),
                     'POC.quantity',
                     'POC.productionId',
                 )
-                .from('productionOtherCosts POC')
                 .leftJoin('otherCosts AS OC', 'OC.uuid', 'POC.otherCostId')
                 .where('POC.uuid', uuid)
                 .first();
@@ -48,16 +47,15 @@ class ProductionOtherCostsRepository {
 
     async getByRelations({ otherCostId, productionId }) {
         try {
-            return this.database
+            return database('productionOtherCosts as POC')
                 .select(
-                    'POC.uuid,',
+                    'POC.uuid',
                     'POC.otherCostId',
                     'OC.name AS otherCost',
-                    '(CAST(OC.price AS FLOAT) / CAST(OC.quantity AS FLOAT)) * CAST(POC.quantity AS FLOAT) AS price',
+                    this.database.raw('(("OC"."price" / "OC"."quantity") * "POC"."quantity") AS price'),
                     'POC.quantity',
                     'POC.productionId',
                 )
-                .from('productionOtherCosts POC')
                 .leftJoin('otherCosts AS OC', 'OC.uuid', 'POC.otherCostId')
                 .where('POC.otherCostId', otherCostId)
                 .where('POC.productionId', productionId)

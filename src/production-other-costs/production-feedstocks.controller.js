@@ -1,13 +1,13 @@
 const express = require('express');
-const ProductionsService = require('./productions.service');
 const AuthMiddleware = require('../AuthMiddleware');
+const ProductionOtherCostsService = require('./production-other-costs.service');
 const { paramsValidator } = require('../utils/Utils');
 
-class ProductionsController {
+class ProductionOtherCostsController {
     constructor() {
         this.router = express.Router();
         this.setupRoutes();
-        this.service = new ProductionsService()
+        this.service = new ProductionOtherCostsService()
         this.auth = new AuthMiddleware()
     }
 
@@ -30,17 +30,30 @@ class ProductionsController {
             }
         });
 
+
+        this.router.get('/:uuid', async (req, res, next) => {
+            try {
+                paramsValidator([
+                    { name: "uuid", type: "string", rules: ["isUUID"] }
+                ], req.params);
+
+                const result = await this.service.getOne(req.params.uuid)
+                res.status(200).send(result);
+            } catch (error) {
+                next(error);
+            }
+        });
+
         this.router.post('/', async (req, res, next) => {
             try {
                 paramsValidator([
-                    { name: "name", type: "string" },
-                    { name: "categoryId", type: "string", rules: ["isUUID"] },
-                    { name: "price", type: ["string", "number"] },
-                    { name: "quantity", type: "number" },
+                    { name: "otherCostId", type: "string", rules: ["isNotEmpty", "isUUID"] },
+                    { name: "productionId", type: "string", rules: ["isNotEmpty", "isUUID"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty"] },
                 ], req.body);
 
-                const result = await this.service.create({ ...req.body, userId: req.userId });
-                res.status(200).send(result);
+                const result = await this.service.create(req.body);
+                res.status(201).send(result);
             } catch (error) {
                 next(error);
             }
@@ -53,13 +66,10 @@ class ProductionsController {
                 ], req.params);
 
                 paramsValidator([
-                    { name: "name", type: "string", rules: ["isNotEmpty", "isOptional"] },
-                    { name: "categoryId", type: "string", rules: ["isUUID", "isOptional"] },
-                    { name: "price", type: ["string", "number"], rules: ["isNotEmpty", "isOptional"] },
-                    { name: "quantity", type: "number", rules: ["isOptional"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty"] },
                 ], req.body);
 
-                const result = await this.service.update(req.params.uuid, { ...req.body, userId: req.userId })
+                const result = await this.service.update(req.params.uuid, req.body)
                 res.status(200).send(result);
             } catch (error) {
                 next(error);
@@ -85,4 +95,4 @@ class ProductionsController {
     }
 }
 
-module.exports = ProductionsController;
+module.exports = ProductionOtherCostsController;

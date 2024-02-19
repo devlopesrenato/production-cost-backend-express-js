@@ -47,9 +47,9 @@ class ProductionFeedstocksController {
         this.router.post('/', async (req, res, next) => {
             try {
                 paramsValidator([
-                    { name: "feedstockId", type: "string", rules: ["inNotEmpty", "isUUID"] },
-                    { name: "productionId", type: "string", rules: ["inNotEmpty", "isUUID"] },
-                    { name: "quantity", type: "number", rules: ["inNotEmpty"] },
+                    { name: "feedstockId", type: "string", rules: ["isNotEmpty", "isUUID"] },
+                    { name: "productionId", type: "string", rules: ["isNotEmpty", "isUUID"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty"] },
                 ], req.body);
 
                 const result = await this.service.create(req.body);
@@ -66,7 +66,7 @@ class ProductionFeedstocksController {
                 ], req.params);
 
                 paramsValidator([
-                    { name: "quantity", type: "number", rules: ["inNotEmpty"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty"] },
                 ], req.body);
 
                 const result = await this.service.update(req.params.uuid, req.body)

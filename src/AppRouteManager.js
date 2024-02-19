@@ -6,10 +6,10 @@ const ProductionsController = require('./productions/productions.controller')
 const CategoriesController = require('./categories/categories.controller');
 const ProductionFeedstocksController = require('./production-feedstocks/production-feedstocks.controller');
 const FeedstocksController = require('./feedstocks/feedstocks.controller');
+const ProductionOtherCostsController = require('./production-other-costs/production-feedstocks.controller');
+const OtherCostsController = require('./other-costs/other-costs.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
-const routeWPOUsed = require('./routes/wpoUsed');
-const routeWPOU = require('./routes/wpo');
 const routeDash = require('./routes/dashboard');
 const routeReports = require('./routes/reports');
 const routeSettings = require('./routes/settings');
@@ -23,6 +23,8 @@ class AppRouteManager {
         this.categoriesController = new CategoriesController();
         this.productionFeedstocksController = new ProductionFeedstocksController();
         this.feedstocksController = new FeedstocksController();
+        this.productionOtherCostsController = new ProductionOtherCostsController();
+        this.otherCostsController = new OtherCostsController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -37,11 +39,11 @@ class AppRouteManager {
         this.router.use('/category', this.categoriesController.getRouter());
         this.router.use('/production-feedstock', this.productionFeedstocksController.getRouter());
         this.router.use('/feedstock', this.feedstocksController.getRouter());
+        this.router.use('/production-otherCost', this.productionOtherCostsController.getRouter());
+        this.router.use('/otherCost', this.otherCostsController.getRouter());
 
         // TO UPDATE
         this.router.use('/simplemeasure', routeSimpleMeasure);
-        this.router.use('/wpoused', routeWPOUsed);
-        this.router.use('/wpo', routeWPOU);
         this.router.use('/dashboard', routeDash);
         this.router.use('/reports', routeReports);
         this.router.use('/settings', routeSettings);

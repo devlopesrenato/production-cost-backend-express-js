@@ -47,10 +47,10 @@ class FeedstocksController {
         this.router.post('/', async (req, res, next) => {
             try {
                 paramsValidator([
-                    { name: "name", type: "string", rules: ["inNotEmpty"] },
-                    { name: "customMeasurementId", type: "string", rules: ["inNotEmpty", "isUUID"] },
-                    { name: "quantity", type: "number", rules: ["inNotEmpty"] },
-                    { name: "price", type: "number", rules: ["inNotEmpty"] },
+                    { name: "name", type: "string", rules: ["isNotEmpty"] },
+                    { name: "customMeasurementId", type: "string", rules: ["isNotEmpty", "isUUID"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty"] },
+                    { name: "price", type: "number", rules: ["isNotEmpty"] },
                 ], req.body);
 
                 const result = await this.service.create({ ...req.body, userId: req.userId });
@@ -68,9 +68,9 @@ class FeedstocksController {
 
                 paramsValidator([
                     { name: "name", type: "string", rules: ["isNotEmpty", "isOptional"] },
-                    { name: "customMeasurementId", type: "string", rules: ["inNotEmpty", "isUUID", "isOptional"] },
-                    { name: "quantity", type: "number", rules: ["inNotEmpty", "isOptional"] },
-                    { name: "price", type: "number", rules: ["inNotEmpty", "isOptional"] },
+                    { name: "customMeasurementId", type: "string", rules: ["isNotEmpty", "isUUID", "isOptional"] },
+                    { name: "quantity", type: "number", rules: ["isNotEmpty", "isOptional"] },
+                    { name: "price", type: "number", rules: ["isNotEmpty", "isOptional"] },
                 ], req.body);
 
                 const result = await this.service.update(req.params.uuid, { ...req.body, userId: req.userId })
