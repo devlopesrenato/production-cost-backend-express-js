@@ -2,24 +2,30 @@ const express = require('express');
 const AppInitializer = require('./AppInitializer');
 const UsersController = require('./users/users.controller');
 const UnitsOfMeasurementController = require('./units-of-measurement/units-of-measurement.controller');
+const ProductionsController = require('./productions/productions.controller')
+const CategoriesController = require('./categories/categories.controller');
+const ProductionFeedstocksController = require('./production-feedstocks/production-feedstocks.controller');
+const FeedstocksController = require('./feedstocks/feedstocks.controller');
+const ProductionOtherCostsController = require('./production-other-costs/production-feedstocks.controller');
+const OtherCostsController = require('./other-costs/other-costs.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
-const routeFeedstock = require('./routes/feedstock');
-const routeProduction = require('./routes/production');
-const routeFeedstockUsed = require('./routes/feedstockUsed');
-const routeWPOUsed = require('./routes/wpoUsed');
-const routeWPOU = require('./routes/wpo');
 const routeDash = require('./routes/dashboard');
-const routeCategory = require('./routes/category');
 const routeReports = require('./routes/reports');
 const routeSettings = require('./routes/settings');
 
 class AppRouteManager {
     constructor() {
-        this.router = express.Router();
         this.appInitializer = new AppInitializer();
         this.usersController = new UsersController();
         this.unitsOfMeasurementController = new UnitsOfMeasurementController();
+        this.productionsController = new ProductionsController();
+        this.categoriesController = new CategoriesController();
+        this.productionFeedstocksController = new ProductionFeedstocksController();
+        this.feedstocksController = new FeedstocksController();
+        this.productionOtherCostsController = new ProductionOtherCostsController();
+        this.otherCostsController = new OtherCostsController();
+        this.router = express.Router();
         this.setupRoutes();
     }
 
@@ -29,17 +35,16 @@ class AppRouteManager {
 
         this.router.use('/users', this.usersController.getRouter());
         this.router.use('/unitsOfMeasurement', this.unitsOfMeasurementController.getRouter());
-        this.router.use('/exactmeasure', this.unitsOfMeasurementController.getRouter());
+        this.router.use('/production', this.productionsController.getRouter());
+        this.router.use('/category', this.categoriesController.getRouter());
+        this.router.use('/production-feedstock', this.productionFeedstocksController.getRouter());
+        this.router.use('/feedstock', this.feedstocksController.getRouter());
+        this.router.use('/production-otherCost', this.productionOtherCostsController.getRouter());
+        this.router.use('/otherCost', this.otherCostsController.getRouter());
 
         // TO UPDATE
         this.router.use('/simplemeasure', routeSimpleMeasure);
-        this.router.use('/feedstock', routeFeedstock);
-        this.router.use('/production', routeProduction);
-        this.router.use('/feedstockused', routeFeedstockUsed);
-        this.router.use('/wpoused', routeWPOUsed);
-        this.router.use('/wpo', routeWPOU);
         this.router.use('/dashboard', routeDash);
-        this.router.use('/category', routeCategory);
         this.router.use('/reports', routeReports);
         this.router.use('/settings', routeSettings);
         // TO UPDATE

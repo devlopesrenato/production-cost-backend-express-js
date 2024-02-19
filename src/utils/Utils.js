@@ -14,9 +14,16 @@ exports.isNumber = (value) => {
 
 exports.paramsValidator = (paramTypes = [], params = {}) => {
     for (const { name, type, rules } of paramTypes) {
+        if (
+            params[name] === undefined
+            && rules.includes('isOptional')
+        ) continue;
+
         const types = Array.isArray(type) ? type : [type];
         if (!types.includes(typeof params[name])) {
-            throw new BadRequestError(`Invalid parameter ${name}. Expected: ${types.join(" or ")}, received: ${typeof params[name]}`);
+            throw new BadRequestError(
+                `Invalid parameter ${name}. Expected: ${types.join(" or ")}, received: ${typeof params[name]}`
+            );
         }
 
         if (rules && rules.length) {
@@ -29,13 +36,13 @@ exports.paramsValidator = (paramTypes = [], params = {}) => {
                         break;
 
                     case 'isUUID':
-                        if (!exports.isUUID(params[name])) {
-                            throw new BadRequestError("Invalid uuid");
+                        if (!this.isUUID(params[name])) {
+                            throw new BadRequestError(`Invalid ${name}`);
                         }
                         break;
 
                     case 'isNumber':
-                        if (!exports.isNumber(params[name])) {
+                        if (!this.isNumber(params[name])) {
                             throw new BadRequestError(`Invalid ${name}`);
                         }
                         break;
