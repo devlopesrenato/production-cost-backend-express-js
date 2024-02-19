@@ -8,6 +8,7 @@ const ProductionFeedstocksController = require('./production-feedstocks/producti
 const FeedstocksController = require('./feedstocks/feedstocks.controller');
 const ProductionOtherCostsController = require('./production-other-costs/production-feedstocks.controller');
 const OtherCostsController = require('./other-costs/other-costs.controller');
+const CustomMeasurementsController = require('./custom-measurements/custom-measurements.controller');
 
 const routeSimpleMeasure = require('./routes/simpleMeasure');
 const routeDash = require('./routes/dashboard');
@@ -25,6 +26,7 @@ class AppRouteManager {
         this.feedstocksController = new FeedstocksController();
         this.productionOtherCostsController = new ProductionOtherCostsController();
         this.otherCostsController = new OtherCostsController();
+        this.customMeasurementsController = new CustomMeasurementsController();
         this.router = express.Router();
         this.setupRoutes();
     }
@@ -41,9 +43,9 @@ class AppRouteManager {
         this.router.use('/feedstock', this.feedstocksController.getRouter());
         this.router.use('/production-otherCost', this.productionOtherCostsController.getRouter());
         this.router.use('/otherCost', this.otherCostsController.getRouter());
+        this.router.use('/customMeasurement', this.customMeasurementsController.getRouter());
 
         // TO UPDATE
-        this.router.use('/simplemeasure', routeSimpleMeasure);
         this.router.use('/dashboard', routeDash);
         this.router.use('/reports', routeReports);
         this.router.use('/settings', routeSettings);

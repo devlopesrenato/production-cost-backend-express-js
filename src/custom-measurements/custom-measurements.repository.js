@@ -13,7 +13,7 @@ class CustomMeasurementsRepository {
                     'CM.uuid',
                     'CM.name',
                     'CM.unitsOfMeasurementId',
-                    'CM.name AS unitsOfMeasurement',
+                    'UM.name AS unitsOfMeasurement',
                     'CM.quantity',
                     'CM.createById',
                     { createBy: 'UC.name' },
@@ -39,7 +39,7 @@ class CustomMeasurementsRepository {
                     'CM.uuid',
                     'CM.name',
                     'CM.unitsOfMeasurementId',
-                    'CM.name AS unitsOfMeasurement',
+                    'UM.name AS unitsOfMeasurement',
                     'CM.quantity',
                     'CM.createById',
                     { createBy: 'UC.name' },
@@ -59,7 +59,6 @@ class CustomMeasurementsRepository {
         }
     }
 
-
     async getByName(name) {
         try {
             return database('customMeasurements as CM')
@@ -67,7 +66,7 @@ class CustomMeasurementsRepository {
                     'CM.uuid',
                     'CM.name',
                     'CM.unitsOfMeasurementId',
-                    'CM.name AS unitsOfMeasurement',
+                    'UM.name AS unitsOfMeasurement',
                     'CM.quantity',
                     'CM.createById',
                     { createBy: 'UC.name' },
@@ -79,7 +78,7 @@ class CustomMeasurementsRepository {
                 .leftJoin('unitsOfMeasurement as UM', 'UM.uuid', 'CM.unitsOfMeasurementId')
                 .leftJoin('users as UC', 'UC.uuid', 'CM.createById')
                 .leftJoin('users as UU', 'UU.uuid', 'CM.modifyById')
-                .where('CM.name', name)
+                .where(database.raw('UPPER("CM"."name")'), name.toUpperCase().trim())
                 .first();
         } catch (error) {
             console.log(error)
@@ -91,7 +90,7 @@ class CustomMeasurementsRepository {
         try {
             await this.database('customMeasurements')
                 .insert({
-                    name,
+                    name: name.trim(),
                     unitsOfMeasurementId,
                     quantity,
                     createById: userId,
@@ -110,14 +109,14 @@ class CustomMeasurementsRepository {
     async update(uuid, { name, unitsOfMeasurementId, quantity, userId }) {
         try {
             await this.database('customMeasurements')
-            .where('uuid', uuid)
-            .update({
-                modifyDate: this.database.fn.now(),
-                modifyById: userId,
-                ...(name && { name: name }),
-                ...(unitsOfMeasurementId && { unitsOfMeasurementId }),
-                ...(quantity && { quantity })
-            });
+                .where('uuid', uuid)
+                .update({
+                    modifyDate: this.database.fn.now(),
+                    modifyById: userId,
+                    ...(name && { name: name }),
+                    ...(unitsOfMeasurementId && { unitsOfMeasurementId }),
+                    ...(quantity && { quantity })
+                });
 
             return await this.getOne(uuid);
         } catch (error) {
