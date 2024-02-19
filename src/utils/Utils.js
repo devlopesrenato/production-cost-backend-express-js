@@ -17,7 +17,7 @@ exports.paramsValidator = (paramTypes = [], params = {}) => {
         if (
             params[name] === undefined
             && rules.includes('isOptional')
-        ) break;
+        ) continue;
 
         const types = Array.isArray(type) ? type : [type];
         if (!types.includes(typeof params[name])) {
