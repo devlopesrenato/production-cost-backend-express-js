@@ -10,7 +10,7 @@
 # Installation/Usage
 
 1. Clone the repository
-2. Run the ***yarn install*** command to install dependencies
+2. Run the ***npm run install*** command to install dependencies
 3. Create a .env file in the project root and add the following environment variables:
 
 ```properties
