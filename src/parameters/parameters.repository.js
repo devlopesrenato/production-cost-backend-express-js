@@ -14,6 +14,7 @@ class ParametersRepository {
                     'P.id',
                     'P.description',
                     'P.value',
+                    'P.type',
                     'P.active',
                 )
                 .orderBy('P.id');
@@ -32,6 +33,7 @@ class ParametersRepository {
                     'P.id',
                     'P.description',
                     'P.value',
+                    'P.type',
                     'P.active',
                 )
                 .where('P.uuid', uuid)
@@ -50,6 +52,7 @@ class ParametersRepository {
                     'P.id',
                     'P.description',
                     'P.value',
+                    'P.type',
                     'P.active',
                 )
                 .where('P.id', id)
