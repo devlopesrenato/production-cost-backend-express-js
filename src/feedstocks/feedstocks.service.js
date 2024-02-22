@@ -78,6 +78,9 @@ class FeedstocksService {
         if (!feedstock) {
             throw new NotFoundError("Feedstock not found")
         }
+        if (feedstock.used) {
+            throw new ConflictError("Feedstock is in use")
+        }
         return this.feedstockRepository.delete(uuid);
     }
 }

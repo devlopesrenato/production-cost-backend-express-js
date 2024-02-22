@@ -49,25 +49,18 @@ class FeedstocksRepository {
                     'F.modifyById',
                     'UU.name as modifyBy',
                     'F.modifyDate',
-                    this.database.raw('COUNT("PF"."feedstockId") AS used')
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("PF"."uuid") 
+                            FROM "productionFeedstocks" AS "PF"
+                            WHERE "PF"."feedstockId" = "F"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
                 .leftJoin('users AS UC', 'UC.uuid', 'F.createById')
                 .leftJoin('users AS UU', 'UU.uuid', 'F.modifyById')
                 .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
-                .leftJoin('productionFeedstocks as PF', 'PF.feedstockId', 'F.uuid')
                 .where('F.uuid', uuid)
-                .groupBy(
-                    'F.uuid',
-                    'F.name',
-                    'F.customMeasurementId',
-                    'CM.name',
-                    'F.quantity',
-                    'F.price',
-                    'UC.name',
-                    'F.createDate',
-                    'UU.name',
-                    'F.modifyDate'
-                )
                 .first();
         } catch (error) {
             console.log(error)
@@ -91,25 +84,18 @@ class FeedstocksRepository {
                     'F.modifyById',
                     'UU.name as modifyBy',
                     'F.modifyDate',
-                    this.database.raw('COUNT("PF"."feedstockId") AS used')
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("PF"."uuid") 
+                            FROM "productionFeedstocks" AS "PF"
+                            WHERE "PF"."feedstockId" = "F"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
                 .leftJoin('users AS UC', 'UC.uuid', 'F.createById')
                 .leftJoin('users AS UU', 'UU.uuid', 'F.modifyById')
                 .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
-                .leftJoin('productionFeedstocks as PF', 'PF.feedstockId', 'F.uuid')
                 .where('F.name', name)
-                .groupBy(
-                    'F.uuid',
-                    'F.name',
-                    'F.customMeasurementId',
-                    'CM.name',
-                    'F.quantity',
-                    'F.price',
-                    'UC.name',
-                    'F.createDate',
-                    'UU.name',
-                    'F.modifyDate'
-                )
                 .first();
         } catch (error) {
             console.log(error)
