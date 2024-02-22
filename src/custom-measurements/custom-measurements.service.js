@@ -73,6 +73,9 @@ class CustomMeasurementsService {
         const customMeasurements = await this.customMeasurementsRepository.getOne(uuid);
         if (!customMeasurements) {
             throw new NotFoundError("Custom measurement not found")
+        }        
+        if (customMeasurements.used) {
+            throw new ConflictError("Custom measurement is in use")
         }
         return this.customMeasurementsRepository.delete(uuid);
     }

@@ -34,7 +34,7 @@ class CustomMeasurementsRepository {
 
     async getOne(uuid) {
         try {
-            return database('customMeasurements as CM')
+            const result = await database('customMeasurements as CM')
                 .select(
                     'CM.uuid',
                     'CM.name',
@@ -47,12 +47,25 @@ class CustomMeasurementsRepository {
                     'CM.modifyById',
                     { modifyBy: 'UU.name' },
                     'CM.modifyDate',
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("F"."uuid") 
+                            FROM "feedstocks" AS "F"
+                            WHERE "F"."customMeasurementId" = "CM"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
                 .leftJoin('unitsOfMeasurement as UM', 'UM.uuid', 'CM.unitsOfMeasurementId')
                 .leftJoin('users as UC', 'UC.uuid', 'CM.createById')
                 .leftJoin('users as UU', 'UU.uuid', 'CM.modifyById')
                 .where('CM.uuid', uuid)
                 .first();
+                
+            if (result?.error) {
+                console.log(result)
+                throw new InternalServerError('')
+            }            
+            return result
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to get custom measurement");
@@ -61,7 +74,7 @@ class CustomMeasurementsRepository {
 
     async getByName(name) {
         try {
-            return database('customMeasurements as CM')
+            const result = await database('customMeasurements as CM')
                 .select(
                     'CM.uuid',
                     'CM.name',
@@ -74,12 +87,25 @@ class CustomMeasurementsRepository {
                     'CM.modifyById',
                     { modifyBy: 'UU.name' },
                     'CM.modifyDate',
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("F"."uuid") 
+                            FROM "feedstocks" AS "F" 
+                            WHERE "F"."customMeasurementId" = "CM"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
                 .leftJoin('unitsOfMeasurement as UM', 'UM.uuid', 'CM.unitsOfMeasurementId')
                 .leftJoin('users as UC', 'UC.uuid', 'CM.createById')
                 .leftJoin('users as UU', 'UU.uuid', 'CM.modifyById')
                 .where(database.raw('UPPER("CM"."name")'), name.toUpperCase().trim())
                 .first();
+
+            if (result?.error) {
+                console.log(result)
+                throw new InternalServerError('')
+            }
+            return result
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to get custom measurement");
