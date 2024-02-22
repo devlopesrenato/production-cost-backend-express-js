@@ -72,6 +72,9 @@ class OtherCostsService {
         if (!otherCosts) {
             throw new NotFoundError("OtherCost not found")
         }
+        if (otherCosts.used) {
+            throw new ConflictError("OtherCost is in use")
+        }
         return this.otherCostsRepository.delete(uuid);
     }
 }

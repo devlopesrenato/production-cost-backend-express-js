@@ -90,24 +90,17 @@ class OtherCostsRepository {
                     'OC.createDate',
                     'UU.name as modifyBy',
                     'OC.modifyDate',
-                    this.database.raw('COUNT("POC"."otherCostId") AS used')
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("POC"."uuid") 
+                            FROM "productionOtherCosts" AS "POC"
+                            WHERE "POC"."otherCostId" = "OC"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
-                .leftJoin('productionOtherCosts as POC', 'POC.otherCostId', 'OC.uuid')
                 .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
                 .leftJoin('users AS UU', 'UU.uuid', 'OC.modifyById')
                 .where('OC.uuid', uuid)
-                .groupBy(
-                    'OC.uuid',
-                    'OC.name',
-                    'OC.quantity',
-                    'OC.price',
-                    'OC.active',
-                    'OC.type',
-                    'UC.name',
-                    'OC.createDate',
-                    'UU.name',
-                    'OC.modifyDate',
-                )
                 .first();
         } catch (error) {
             console.log(error)
@@ -129,24 +122,17 @@ class OtherCostsRepository {
                     'OC.createDate',
                     'UU.name as modifyBy',
                     'OC.modifyDate',
-                    this.database.raw('COUNT("POC"."otherCostId") AS used')
+                    this.database.raw(`
+                        (
+                            SELECT COUNT("POC"."uuid") 
+                            FROM "productionOtherCosts" AS "POC"
+                            WHERE "POC"."otherCostId" = "OC"."uuid"
+                        ) > 0 AS used
+                    `)
                 )
-                .leftJoin('productionOtherCosts as POC', 'POC.otherCostId', 'OC.uuid')
                 .leftJoin('users AS UC', 'UC.uuid', 'OC.createById')
                 .leftJoin('users AS UU', 'UU.uuid', 'OC.modifyById')
                 .where('OC.name', name)
-                .groupBy(
-                    'OC.uuid',
-                    'OC.name',
-                    'OC.quantity',
-                    'OC.price',
-                    'OC.active',
-                    'OC.type',
-                    'UC.name',
-                    'OC.createDate',
-                    'UU.name',
-                    'OC.modifyDate',
-                )
                 .first();
         } catch (error) {
             console.log(error)
