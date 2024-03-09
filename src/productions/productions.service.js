@@ -37,8 +37,8 @@ class ProductionsService {
                 cost,
                 profit,
                 percent,
-                feedstockUsed: prodFeedstocks || [],
-                wpoUsed: prodOtherCosts || [],
+                feedstocksUsed: prodFeedstocks || [],
+                otherCostsUsed: prodOtherCosts || [],
             })
         });
         return productionsResponse;
