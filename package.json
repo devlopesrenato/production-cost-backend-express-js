@@ -5,7 +5,8 @@
   "main": "./src/main.js",
   "scripts": {
     "start": "node ./src/main.js",
-    "start:dev": "npm install && nodemon ./src/main.js"
+    "start:dev": "npm install && nodemon ./src/main.js",
+    "migrate": "npx knex migrate:latest"
   },
   "keywords": [
     "node",
