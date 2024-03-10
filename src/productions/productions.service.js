@@ -88,6 +88,50 @@ class ProductionsService {
         return this.productionsRepository.update(uuid, updateProductionDto)
     }
 
+    async duplicate(uuid, { userId, name: submittedName }) {
+        const production = await this.productionsRepository.getOne(uuid);
+        if (!production) {
+            throw new NotFoundError("Production not found");
+        }
+        const { name, categoryId, price, quantity } = production;
+        const newName = submittedName || await this.generateDuplicateDescription(name);
+        const duplicatedProduction = await this.create({
+            name: newName,
+            categoryId,
+            price,
+            quantity,
+            userId
+        })
+        const productionFeedstocks = await this.productionFeedstocksRepository.getByProduction({ productionId: uuid });
+        if (productionFeedstocks.length) {
+            const newProductionFeedstocks = productionFeedstocks.map(({
+                feedstockId,
+                quantity
+            }) => ({
+                feedstockId,
+                productionId: duplicatedProduction.uuid,
+                quantity,
+            }));
+            await this.productionFeedstocksRepository.createMany(newProductionFeedstocks);
+        }
+
+        const productionOtherCosts = await this.productionOtherCostsRepository.getByProduction({ productionId: uuid });
+        if (productionOtherCosts.length) {
+            const newProductionOtherCosts = productionOtherCosts.map(({
+                otherCostId,
+                quantity
+            }) => ({
+                otherCostId,
+                productionId: duplicatedProduction.uuid,
+                quantity,
+            }));
+            await this.productionOtherCostsRepository.createMany(newProductionOtherCosts);
+        }
+
+        return duplicatedProduction;
+
+    }
+
     async delete(uuid) {
         const production = await this.productionsRepository.getOne(uuid);
         if (!production) {
@@ -141,6 +185,27 @@ class ProductionsService {
         } catch (error) {
             console.log(error);
             throw new InternalServerError("Error get production info: " + error.message)
+        }
+    }
+
+    async generateDuplicateDescription(description) {
+        try {
+            let duplicateCount = 0
+            let newItemDescription = description
+            const allProductions = await this.getAll()
+            const isDescriptionDuplicate = (description) => {
+                return allProductions.some(({ name: existingDescription }) => {
+                    return existingDescription === description
+                })
+            }
+            while (isDescriptionDuplicate(newItemDescription)) {
+                duplicateCount++
+                newItemDescription = `${description} (Copy ${duplicateCount})`
+            }
+            return newItemDescription
+        } catch (error) {
+            console.log("Error generating duplicate item name", error)
+            throw new InternalServerError("Error generating duplicate item name")
         }
     }
 }

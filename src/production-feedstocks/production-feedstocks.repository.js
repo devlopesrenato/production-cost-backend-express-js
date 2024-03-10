@@ -75,6 +75,28 @@ class ProductionFeedstocksRepository {
         }
     }
 
+    async getByProduction({ productionId }) {
+        try {
+            return database('productionFeedstocks as PF')
+                .select(
+                    'PF.uuid',
+                    'PF.feedstockId',
+                    'F.name AS feedstock',
+                    'F.customMeasurementId',
+                    'CM.name AS measurement',
+                    this.database.raw('(("F"."price" / "F"."quantity") * "PF"."quantity") AS price'),
+                    'PF.quantity',
+                    'PF.productionId',
+                )
+                .leftJoin('feedstocks AS F', 'F.uuid', 'PF.feedstockId')
+                .leftJoin('customMeasurements AS CM', 'CM.uuid', 'F.customMeasurementId')
+                .where('PF.productionId', productionId);
+        } catch (error) {
+            console.log(error)
+            throw new InternalServerError("Failed to get production feedstock")
+        }
+    }
+
     async create({ feedstockId, productionId, quantity }) {
         try {
             await this.database('productionFeedstocks')
@@ -88,6 +110,18 @@ class ProductionFeedstocksRepository {
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to create production feedstock")
+        }
+    }
+
+    async createMany(data) {
+        try {
+            return await this.database('productionFeedstocks')
+                .insert(data)
+                .then(() => true)
+                .catch(() => false);
+        } catch (error) {
+            console.log(error)
+            throw new InternalServerError("Failed to create production feedstocks")
         }
     }
 
