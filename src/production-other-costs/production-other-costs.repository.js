@@ -66,6 +66,25 @@ class ProductionOtherCostsRepository {
         }
     }
 
+    async getByProduction({ productionId }) {
+        try {
+            return database('productionOtherCosts as POC')
+                .select(
+                    'POC.uuid',
+                    'POC.otherCostId',
+                    'OC.name AS otherCost',
+                    this.database.raw('(("OC"."price" / "OC"."quantity") * "POC"."quantity") AS price'),
+                    'POC.quantity',
+                    'POC.productionId',
+                )
+                .leftJoin('otherCosts AS OC', 'OC.uuid', 'POC.otherCostId')
+                .where('POC.productionId', productionId);
+        } catch (error) {
+            console.log(error)
+            throw new InternalServerError("Failed to get production other cost")
+        }
+    }
+
     async create({ otherCostId, productionId, quantity }) {
         try {
             await this.database('productionOtherCosts')
@@ -79,6 +98,18 @@ class ProductionOtherCostsRepository {
         } catch (error) {
             console.log(error)
             throw new InternalServerError("Failed to create production other cost")
+        }
+    }
+
+    async createMany(data) {
+        try {
+            return this.database('productionOtherCosts')
+                .insert(data)
+                .then(() => true)
+                .catch(() => false);
+        } catch (error) {
+            console.log(error)
+            throw new InternalServerError("Failed to create production other costs")
         }
     }
 
