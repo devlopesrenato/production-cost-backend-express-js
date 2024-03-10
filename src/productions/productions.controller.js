@@ -46,6 +46,23 @@ class ProductionsController {
             }
         });
 
+        this.router.post('/duplicate/:uuid', async (req, res, next) => {
+            try {
+                paramsValidator([
+                    { name: "uuid", type: "string", rules: ["isUUID"] }
+                ], req.params);
+
+                paramsValidator([
+                    { name: "name", type: "string", rules: ["isNotEmpty", "isOptional"] },
+                ], req.body);
+
+                const result = await this.service.duplicate(req.params.uuid, { userId: req.userId, name: req.body.name });
+                res.status(201).send(result);
+            } catch (error) {
+                next(error);
+            }
+        });
+
         this.router.put('/:uuid', async (req, res, next) => {
             try {
                 paramsValidator([
