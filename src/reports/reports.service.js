@@ -27,13 +27,18 @@ class ReportsService {
 
             const productionsResponse = []
             productions.forEach(async production => {
-                const { cost, profit, margin: percent }
-                    = this.productionsService.getProductionInfo({
-                        production,
-                        costsDistributed,
-                        productionOtherCosts,
-                        productionFeedstocks
-                    })
+                const {                   
+                    cost,
+                    profit,
+                    margin: percent,
+                    marketProfit,
+                    marketMargin: marketPercent
+                } = this.productionsService.getProductionInfo({
+                    production,
+                    costsDistributed,
+                    productionOtherCosts,
+                    productionFeedstocks
+                })
 
                 productionsResponse.push({
                     uuid: production.uuid,
@@ -42,7 +47,9 @@ class ReportsService {
                     cost,
                     profit,
                     percent,
-                    suggestedPrice: cost * (margin / 100 + 1)
+                    marketProfit,
+                    marketPercent,
+                    suggestedPrice: cost * ((margin / 100) + 1),
                 })
             });
 

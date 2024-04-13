@@ -13,6 +13,7 @@ class ProductionsRepository {
                     'P.uuid',
                     'P.name',
                     'P.price',
+                    'P.marketPrice',
                     'P.quantity',
                     'P.categoryId',
                     { category: 'C.name' },
@@ -40,6 +41,7 @@ class ProductionsRepository {
                     'P.uuid',
                     'P.name',
                     'P.price',
+                    'P.marketPrice',
                     'P.quantity',
                     'P.categoryId',
                     { category: 'C.name' },
@@ -68,6 +70,7 @@ class ProductionsRepository {
                     'P.uuid',
                     'P.name',
                     'P.price',
+                    'P.marketPrice',
                     'P.quantity',
                     'P.categoryId',
                     { category: 'C.name' },
@@ -89,12 +92,13 @@ class ProductionsRepository {
         }
     }
 
-    async create({ name, price, quantity, categoryId, userId }) {
+    async create({ name, price, marketPrice, quantity, categoryId, userId }) {
         try {
             await this.database('productions')
                 .insert({
                     name,
                     price,
+                    marketPrice,
                     quantity,
                     categoryId,
                     createById: userId,
@@ -109,13 +113,14 @@ class ProductionsRepository {
         }
     }
 
-    async update(uuid, { name, price, quantity, categoryId, userId }) {
+    async update(uuid, { name, price, marketPrice, quantity, categoryId, userId }) {
         try {
             await database('productions')
                 .where('uuid', uuid)
                 .update({
                     name,
                     price,
+                    marketPrice,
                     quantity,
                     categoryId,
                     modifyDate: database.fn.now(),
