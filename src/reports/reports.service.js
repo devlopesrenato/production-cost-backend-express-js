@@ -43,10 +43,11 @@ class ReportsService {
                 productionsResponse.push({
                     uuid: production.uuid,
                     name: production.name,
-                    price: production.price,
                     cost,
+                    price: production.price,
                     profit,
                     percent,
+                    marketPrice: production.marketPrice,
                     marketProfit,
                     marketPercent,
                     suggestedPrice: cost * ((margin / 100) + 1),
