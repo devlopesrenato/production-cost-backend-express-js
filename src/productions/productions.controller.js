@@ -41,7 +41,7 @@ class ProductionsController {
                 ], req.body);
 
                 const result = await this.service.create({ ...req.body, userId: req.userId });
-                res.status(201).send(result);
+                res.status(200).send(result);
             } catch (error) {
                 next(error);
             }
