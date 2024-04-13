@@ -16,27 +16,25 @@ class DashboardService {
 
             const _prodPerCost = [...productions];
             const productionsPerCost = _prodPerCost
-                .filter(({ cost }) => cost > 0)
-                .sort((a, b) => b.value - a.value)
+                .filter(({ cost }) => cost > 0)                
                 .slice(0, 8)
                 .map(({ uuid, name, price: value }) => ({ uuid, name, value }));
 
             const _prodBellowMargin = [...productions];
             const productionsBelowMargin = _prodBellowMargin
-                .filter(({ percent }) => percent < margin)
-                .sort((a, b) => b.value - a.value)
+                .filter(({ percent }) => percent < margin)                
                 .slice(0, 8)
                 .map(({ uuid, name, percent: value }) => ({ uuid, name, value }));
 
             return [
                 {
                     name: "Higher costs:",
-                    data: productionsPerCost,
-                    typeValue: "R$"
+                    data: productionsPerCost.sort((a, b) => b.value - a.value),
+                    typeValue: "$"
                 },
                 {
                     name: `Productions with a margin below ${margin}%:`,
-                    data: productionsBelowMargin,
+                    data: productionsBelowMargin.sort((a, b) => b.value - a.value),
                     typeValue: "%"
                 },
             ];
