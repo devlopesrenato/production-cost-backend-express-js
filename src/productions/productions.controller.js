@@ -36,6 +36,7 @@ class ProductionsController {
                     { name: "name", type: "string" },
                     { name: "categoryId", type: "string", rules: ["isUUID"] },
                     { name: "price", type: ["string", "number"] },
+                    { name: "marketPrice", type: ["string", "number"] },
                     { name: "quantity", type: "number" },
                 ], req.body);
 
@@ -73,6 +74,7 @@ class ProductionsController {
                     { name: "name", type: "string", rules: ["isNotEmpty", "isOptional"] },
                     { name: "categoryId", type: "string", rules: ["isUUID", "isOptional"] },
                     { name: "price", type: ["string", "number"], rules: ["isNotEmpty", "isOptional"] },
+                    { name: "marketPrice", type: ["string", "number"], rules: ["isNotEmpty", "isOptional"] },
                     { name: "quantity", type: "number", rules: ["isOptional"] },
                 ], req.body);
 

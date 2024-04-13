@@ -24,19 +24,28 @@ class ProductionsService {
 
         const productionsResponse = []
         productions.forEach(async production => {
-            const { prodFeedstocks, prodOtherCosts, cost, profit, margin: percent }
-                = this.getProductionInfo({
-                    production,
-                    costsDistributed,
-                    productionOtherCosts,
-                    productionFeedstocks
-                })
+            const {
+                prodFeedstocks,
+                prodOtherCosts,
+                cost,
+                profit,
+                margin: percent,
+                marketProfit,
+                marketMargin: marketPercent
+            } = this.getProductionInfo({
+                production,
+                costsDistributed,
+                productionOtherCosts,
+                productionFeedstocks
+            })
 
             productionsResponse.push({
                 ...production,
                 cost,
                 profit,
                 percent,
+                marketProfit,
+                marketPercent,
                 feedstocksUsed: prodFeedstocks || [],
                 otherCostsUsed: prodOtherCosts || [],
             })
@@ -53,14 +62,13 @@ class ProductionsService {
         if (!category) {
             throw new NotFoundError("Category not found");
         }
-        const created = await this.productionsRepository.create(createProductionDto)
-        if (created.error) {
-            throw new NotFoundError("Error creating production");
-        }
         if (createProductionDto.quantity < 1) {
             throw new BadRequestError("Quantity cannot be less than 1")
         }
-
+        const created = await this.productionsRepository.create(createProductionDto)
+        if (!created) {
+            throw new NotFoundError("Error creating production");
+        }
         return created;
     }
 
@@ -147,7 +155,7 @@ class ProductionsService {
         costsDistributed = []
     }) {
         try {
-            const { uuid, quantity, price } = production;
+            const { uuid, quantity, price, marketPrice } = production;
             const prodFeedstocks = productionFeedstocks
                 .filter(({ productionId: id }) =>
                     id === uuid
@@ -173,6 +181,8 @@ class ProductionsService {
 
             const profit = parseFloat(price) - finalCost;
             const marginProd = finalCost > 0 ? (profit / finalCost) * 100 : 100;
+            const marketProfit = parseFloat(marketPrice) - finalCost;
+            const marketMarginProd = finalCost > 0 ? (marketProfit / finalCost) * 100 : 100;
 
             return {
                 prodFeedstocks,
@@ -180,6 +190,8 @@ class ProductionsService {
                 cost: finalCost,
                 profit,
                 margin: marginProd,
+                marketProfit,
+                marketMargin: marketMarginProd,
             }
 
         } catch (error) {
