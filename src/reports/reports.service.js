@@ -43,6 +43,7 @@ class ReportsService {
                 productionsResponse.push({
                     uuid: production.uuid,
                     name: production.name,
+                    category: production.category,
                     cost,
                     price: production.price,
                     profit,
