@@ -8,23 +8,23 @@ require('dotenv').config()
 class AuthMiddleware {
     constructor() {
         this.secret = process.env.SECRET_KEY;
+        this.tokenExpiresIn = process.env.TOKEN_EXPIRES_IN || '3h';
         this.usersRepository = new UsersRepository();
     }
 
     async verifyJWT(request, next) {
         try {
             const token = this.jwtExtractor(request);
-            const decodedToken = await this.jwtDecoder(token);            
+            const decodedToken = await this.jwtDecoder(token);
             const user = await this.usersRepository.getById(decodedToken.id);
             if (!user) {
                 throw new UnauthorizedError("User not found");
             }
             request.userId = decodedToken.id;
+            next();
         } catch (error) {
-            console.log(error)
-            next(error)
-        } finally {
-            next()
+            console.log(error);
+            next(error);
         }
     }
 
@@ -38,18 +38,17 @@ class AuthMiddleware {
     }
 
     async jwtDecoder(token) {
-        return jwt.verify(token, `${this.secret}`, function (err, decoded) {
-            if (err) {
-                throw new UnauthorizedError("Invalid JWT token")
-            }
-            return decoded;
-        });
+        try {
+            return jwt.verify(token, this.secret);
+        } catch (error) {
+            throw new UnauthorizedError("Invalid JWT token");
+        }
     }
 
     createJTW(userData) {
         try {
             return jwt.sign(userData, `${this.secret}`, {
-                expiresIn: 604800 // 7 dias
+                expiresIn: this.tokenExpiresIn
             });
         } catch (error) {
             console.log(error);
